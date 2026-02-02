@@ -1,0 +1,12 @@
+{
+    "name": "retro-tictactoe-api",
+    "version": "1.0.0",
+    "description": "Azure Functions for Retro Tic-Tac-Toe",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"No tests specified\""
+    },
+    "dependencies": {
+        "@azure/web-pubsub": "^1.1.2"
+    }
+}

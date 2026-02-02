@@ -1,0 +1,582 @@
+/* Import VT323 Google Font for retro terminal aesthetic */
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+/* CSS Variables - Retro Arcade Color Palette */
+:root {
+  --neon-green: #39FF14;
+  --electric-purple: #BF00FF;
+  --amber: #FFBF00;
+  --deep-black: #0a0a0a;
+  --terminal-green: #00ff00;
+  --error-red: #ff0040;
+}
+
+/* Global Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'VT323', monospace;
+  background: var(--deep-black);
+  color: var(--neon-green);
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* CRT Screen Container with Scanline Effect */
+#root {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: var(--deep-black);
+  overflow: hidden;
+}
+
+/* Scanline Overlay Effect */
+#root::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(0deg,
+      rgba(0, 0, 0, 0.15),
+      rgba(0, 0, 0, 0.15) 1px,
+      transparent 1px,
+      transparent 2px);
+  pointer-events: none;
+  z-index: 1000;
+  animation: scanline-jitter 8s infinite;
+}
+
+/* CRT Flicker Animation */
+@keyframes crt-flicker {
+  0% {
+    opacity: 0.97;
+  }
+
+  2% {
+    opacity: 0.94;
+  }
+
+  4% {
+    opacity: 0.98;
+  }
+
+  19% {
+    opacity: 0.97;
+  }
+
+  21% {
+    opacity: 0.96;
+  }
+
+  23% {
+    opacity: 0.99;
+  }
+
+  80% {
+    opacity: 0.97;
+  }
+
+  83% {
+    opacity: 0.93;
+  }
+
+  87% {
+    opacity: 0.98;
+  }
+
+  100% {
+    opacity: 0.97;
+  }
+}
+
+@keyframes scanline-jitter {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(2px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Main App Container */
+.app-container {
+  position: relative;
+  z-index: 1;
+  animation: crt-flicker 3s infinite;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+/* Terminal-Style Window */
+.terminal-window {
+  background: rgba(10, 10, 10, 0.95);
+  border: 3px solid var(--neon-green);
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 100%;
+  box-shadow:
+    0 0 20px var(--neon-green),
+    inset 0 0 20px rgba(57, 255, 20, 0.1);
+  position: relative;
+}
+
+/* Neon Text Glow Effect */
+.neon-text {
+  text-shadow:
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 20px currentColor;
+  letter-spacing: 2px;
+}
+
+/* Title Styling */
+h1 {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--neon-green);
+  text-shadow:
+    0 0 10px var(--neon-green),
+    0 0 20px var(--neon-green),
+    0 0 30px var(--neon-green);
+  animation: title-pulse 2s ease-in-out infinite;
+}
+
+@keyframes title-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+}
+
+h2 {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--amber);
+}
+
+/* Button Styles - Terminal Buttons */
+button {
+  font-family: 'VT323', monospace;
+  font-size: 1.5rem;
+  padding: 0.75rem 2rem;
+  background: transparent;
+  color: var(--neon-green);
+  border: 2px solid var(--neon-green);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px var(--neon-green);
+  margin: 0.5rem;
+}
+
+button:hover {
+  background: var(--neon-green);
+  color: var(--deep-black);
+  box-shadow:
+    0 0 20px var(--neon-green),
+    0 0 30px var(--neon-green);
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+button.purple {
+  color: var(--electric-purple);
+  border-color: var(--electric-purple);
+  box-shadow: 0 0 10px var(--electric-purple);
+}
+
+button.purple:hover {
+  background: var(--electric-purple);
+  box-shadow:
+    0 0 20px var(--electric-purple),
+    0 0 30px var(--electric-purple);
+}
+
+button.amber {
+  color: var(--amber);
+  border-color: var(--amber);
+  box-shadow: 0 0 10px var(--amber);
+}
+
+button.amber:hover {
+  background: var(--amber);
+  box-shadow:
+    0 0 20px var(--amber),
+    0 0 30px var(--amber);
+}
+
+/* Input Styling - Terminal Input */
+input {
+  font-family: 'VT323', monospace;
+  font-size: 1.8rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--neon-green);
+  border: 2px solid var(--neon-green);
+  text-align: center;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  box-shadow:
+    0 0 10px var(--neon-green),
+    inset 0 0 10px rgba(57, 255, 20, 0.2);
+  width: 100%;
+  max-width: 300px;
+  margin: 1rem auto;
+  display: block;
+}
+
+input:focus {
+  outline: none;
+  box-shadow:
+    0 0 20px var(--neon-green),
+    inset 0 0 15px rgba(57, 255, 20, 0.3);
+  animation: input-glow 1.5s infinite;
+}
+
+@keyframes input-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px var(--neon-green), inset 0 0 15px rgba(57, 255, 20, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 30px var(--neon-green), inset 0 0 20px rgba(57, 255, 20, 0.5);
+  }
+}
+
+input::placeholder {
+  color: rgba(57, 255, 20, 0.5);
+}
+
+/* Game Board Grid - Glowing Motherboard Wires */
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 10px;
+  margin: 2rem auto;
+  padding: 1rem;
+  width: 90%;
+  max-width: 400px;
+  aspect-ratio: 1 / 1;
+  background: rgba(0, 0, 0, 0.8);
+  border: 3px solid var(--electric-purple);
+  box-shadow:
+    0 0 20px var(--electric-purple),
+    inset 0 0 20px rgba(191, 0, 255, 0.1);
+}
+
+/* Game Cell - Glowing Circuit Squares */
+.cell {
+  background: rgba(10, 10, 10, 0.9);
+  border: 2px solid var(--neon-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 10px var(--neon-green);
+  position: relative;
+}
+
+.cell:hover:not(.filled) {
+  animation: glitch-flicker 0.3s infinite;
+  box-shadow:
+    0 0 20px var(--neon-green),
+    0 0 30px var(--neon-green);
+  transform: scale(1.05);
+}
+
+/* Glitch Flicker Effect on Hover */
+@keyframes glitch-flicker {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+
+  25% {
+    opacity: 0.8;
+    transform: translate(-2px, 2px);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(2px, -2px);
+  }
+
+  75% {
+    opacity: 0.9;
+    transform: translate(-1px, -1px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+/* Player X - Neon Green */
+.cell.x {
+  color: var(--neon-green);
+  text-shadow:
+    0 0 10px var(--neon-green),
+    0 0 20px var(--neon-green),
+    0 0 30px var(--neon-green);
+}
+
+/* Player O - Electric Purple */
+.cell.o {
+  color: var(--electric-purple);
+  text-shadow:
+    0 0 10px var(--electric-purple),
+    0 0 20px var(--electric-purple),
+    0 0 30px var(--electric-purple);
+}
+
+.cell.filled {
+  cursor: not-allowed;
+  animation: cell-appear 0.3s ease;
+}
+
+@keyframes cell-appear {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Game Info Display */
+.game-info {
+  text-align: center;
+  margin: 1rem 0;
+  font-size: 1.5rem;
+}
+
+.current-player {
+  color: var(--amber);
+  text-shadow: 0 0 10px var(--amber);
+}
+
+.room-code-display {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--amber);
+  text-align: center;
+  font-size: 1.3rem;
+}
+
+.room-code-display .code {
+  color: var(--amber);
+  font-size: 2rem;
+  letter-spacing: 4px;
+  text-shadow: 0 0 10px var(--amber);
+  margin-left: 0.5rem;
+}
+
+/* Network Status Indicator */
+.network-status {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 0.5rem 1rem;
+  background: rgba(10, 10, 10, 0.9);
+  border: 2px solid var(--terminal-green);
+  font-size: 1.2rem;
+  z-index: 999;
+  box-shadow: 0 0 15px var(--terminal-green);
+}
+
+.network-status.connected {
+  color: var(--terminal-green);
+  animation: status-pulse 2s infinite;
+}
+
+.network-status.disconnected {
+  color: var(--error-red);
+  border-color: var(--error-red);
+  box-shadow: 0 0 15px var(--error-red);
+  animation: status-error 1s infinite;
+}
+
+@keyframes status-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes status-error {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Lobby Component Styles */
+.lobby {
+  text-align: center;
+}
+
+.lobby-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.divider {
+  margin: 2rem 0;
+  text-align: center;
+  color: var(--amber);
+  font-size: 1.5rem;
+}
+
+/* Game Over Screen */
+.game-over {
+  text-align: center;
+}
+
+.winner-message {
+  font-size: 2.5rem;
+  margin: 2rem 0;
+  color: var(--amber);
+  text-shadow:
+    0 0 15px var(--amber),
+    0 0 30px var(--amber);
+  animation: winner-flash 1s infinite;
+}
+
+@keyframes winner-flash {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.ascii-decoration {
+  font-size: 1rem;
+  color: var(--neon-green);
+  margin: 1rem 0;
+  opacity: 0.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cell {
+    font-size: 3rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .terminal-window {
+    padding: 1rem;
+    max-width: 95%;
+  }
+
+  .game-board {
+    max-width: 350px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-board {
+    max-width: 280px;
+    gap: 8px;
+  }
+
+  .cell {
+    font-size: 2.5rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+}
+
+/* Loading Animation */
+@keyframes loading-dots {
+
+  0%,
+  20% {
+    content: '.';
+  }
+
+  40% {
+    content: '..';
+  }
+
+  60%,
+  100% {
+    content: '...';
+  }
+}
+
+.loading::after {
+  content: '';
+  animation: loading-dots 1.5s infinite;
+}
