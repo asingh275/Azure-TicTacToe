@@ -3,6 +3,19 @@ const { WebPubSubServiceClient } = require('@azure/web-pubsub');
 module.exports = async function (context, req) {
     context.log('Processing negotiate request');
 
+    // Handle GET requests for testing
+    if (req.method === 'GET') {
+        context.res = {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' },
+            body: {
+                message: 'Negotiate endpoint is working! Use POST with roomCode and playerId.',
+                hasConnectionString: !!process.env.WEBPUBSUB_CONNECTION_STRING
+            }
+        };
+        return;
+    }
+
     // Get room code and player ID from request
     const { roomCode, playerId } = req.body;
 
