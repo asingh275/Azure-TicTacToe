@@ -3,67 +3,65 @@ const { WebPubSubServiceClient } = require('@azure/web-pubsub');
 module.exports = async function (context, req) {
     context.log('Processing negotiate request');
 
-    // Handle GET requests for testing
+    // 1. Safe GET check for testing
     if (req.method === 'GET') {
+        const hasKey = !!process.env.WEBPUBSUB_CONNECTION_STRING;
         context.res = {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
             body: {
-                message: 'Negotiate endpoint is working! Use POST with roomCode and playerId.',
-                hasConnectionString: !!process.env.WEBPUBSUB_CONNECTION_STRING
+                status: "Ready",
+                message: "Endpoint alive.",
+                webPubSubConfigured: hasKey,
+                note: hasKey ? "Ready to play!" : "Missing WEBPUBSUB_CONNECTION_STRING variable in Azure Portal."
             }
         };
         return;
     }
 
-    // Get room code and player ID from request
-    const { roomCode, playerId } = req.body;
+    // 2. Safe Body check (prevent 500 crash if body is null)
+    const body = req.body || {};
+    const { roomCode, playerId } = body;
 
     if (!roomCode || !playerId) {
         context.res = {
             status: 400,
-            body: { error: 'roomCode and playerId are required' }
+            headers: { 'Content-Type': 'application/json' },
+            body: { error: 'roomCode and playerId are required in POST body' }
         };
         return;
     }
 
     try {
-        // Get connection string from environment variable
         const connectionString = process.env.WEBPUBSUB_CONNECTION_STRING;
 
         if (!connectionString) {
-            throw new Error('WEBPUBSUB_CONNECTION_STRING not configured');
+            context.res = {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' },
+                body: { error: 'WEBPUBSUB_CONNECTION_STRING is not set in Azure Environment Variables.' }
+            };
+            return;
         }
 
-        // Create service client
-        const serviceClient = new WebPubSubServiceClient(
-            connectionString,
-            'tictactoe' // Hub name
-        );
-
-        // Generate client access token
-        // Group players by room code for isolated communication
+        const serviceClient = new WebPubSubServiceClient(connectionString, 'tictactoe');
         const token = await serviceClient.getClientAccessToken({
             userId: playerId,
             groups: [`room-${roomCode}`],
             expirationTimeInMinutes: 60
         });
 
-        // Return the WebSocket URL
         context.res = {
             status: 200,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: {
-                url: token.url
-            }
+            headers: { 'Content-Type': 'application/json' },
+            body: { url: token.url }
         };
     } catch (error) {
-        context.log.error('Error generating token:', error);
+        context.log.error('Error:', error);
         context.res = {
             status: 500,
-            body: { error: 'Failed to generate connection token' }
+            headers: { 'Content-Type': 'application/json' },
+            body: { error: 'Internal Server Error', details: error.message }
         };
     }
 };
